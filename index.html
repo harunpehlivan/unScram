@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>unScram.js</title>
+    <link rel="stylesheet" href="style.css" media="screen">
+
+    <script type="text/javascript">
+      var contents; // WordList Contents
+      function unscramble() {
+        document.getElementById('solution_area').innerHTML = '';
+        var wordList = contents.split("\n");
+
+        var scrambled_words  = document.getElementById('scrambled_words').value.split("\n");
+
+        for (var i = 0; i < scrambled_words.length; i++) {
+          var match = false;
+          var scram_word = scrambled_words[i];
+          for (var x = 0; x < wordList.length; x++) {
+            var word_in_list = wordList[x];
+            console.log("Compare: " + scram_word + " : " + word_in_list);
+            a = sort_word(scram_word);
+            b = sort_word(word_in_list);
+            if(a == b) {
+              var match = true;
+              print_solution(scram_word, word_in_list, match);
+            } else {
+              console.log("FALSE!");
+            }
+          }
+          if(match != true) {
+            print_solution(scram_word, '', match);
+          }
+        }
+      }
+
+      function sort_word(word) {
+        return word.split('').sort().join('');
+      }
+
+      function print_solution(scram_word, word_in_list, match) {
+        if(match == false) {
+          console.log("False!");
+          document.getElementById('solution_area').innerHTML += '<p id="nomatch">' + scram_word + '</p>';
+        }
+        else {
+          console.log("True!");
+          document.getElementById('solution_area').innerHTML += '<p id="match">' + scram_word + ' => ' + word_in_list + '</p>';
+        }
+      }
+
+      function readSingleFile(evt) {
+        var f = evt.target.files[0];
+        if (f) {
+          var r = new FileReader();
+           r.onload = function(e) {
+  	         contents = e.target.result;
+             document.getElementById('loaded').innerHTML = 'Wordlist loaded...';
+           }
+          r.readAsText(f);
+        } else {
+          alert("Failed to load file");
+        }
+      }
+      window.onload = function() { document.getElementById('file').addEventListener('change', readSingleFile, false); }
+      function getWordList() {
+        document.getElementById('loaded').innerHTML = 'Wordlist loaded...';
+      }
+    </script>
+  </head>
+     <body>
+      <header>UnScram.js</header>
+      <section id="upload">
+      <h1>Wordlist</h1>    
+        <button class="file-upload">            
+      <input type="file" name="file" id="file" class="file-input">Choose File</button>
+        </label>
+        <h3 id="loaded"></h3>
+      </section>
+
+      <section id="scrambled">
+      <h1>Scrambled Words</h1>
+        <textarea name="scrambled" id="scrambled_words" cols="30" rows="10"></textarea>
+        <br>
+        <button onClick="unscramble();" style="width:60%" type="submit" class="button button-block"/>Solve!</button>
+      </section>
+
+      <section id="solutions">
+      <h1>Unscrambled Matches</h1>
+        <div id="solution_area"></div>
+      </section>
+    </body>
+</html>
